@@ -1,10 +1,11 @@
 import Head from "next/head";
-import Image from "next/image";
 import styles from "../styles/Home.module.css";
 import Banner from "../components/banner/banner";
 import Navbar from "../components/nav/navbar";
-import Card from "../components/card/card";
-export default function Home() {
+import SectionCard from "../components/sectionCard/sectionCard";
+import { getVideos } from "../lib/videos";
+
+export default function Home({ disneyVideos }) {
   return (
     <div className={styles.container}>
       <Head>
@@ -22,12 +23,17 @@ export default function Home() {
         subTitle="Red dog"
         imgUrl="/static/clifford.jpg"
       />
-      <Card imgUrl="/static/clifford.jpg" size="large" />
-      <Card imgUrl="/static/clifford.jpg" size="medium" />
-      <Card imgUrl="/static/clifford.jpg" size="small" />
 
-      {/* <NavBar/> */}
-      {/* <Card/> */}
+      <SectionCard title="Disney" videos={disneyVideos} size="large" />
     </div>
   );
 }
+
+export const getServerSideProps = async () => {
+  const disneyVideos = getVideos();
+  return {
+    props: {
+      disneyVideos,
+    },
+  };
+};
