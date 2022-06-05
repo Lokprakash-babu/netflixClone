@@ -5,7 +5,12 @@ import Navbar from "../components/nav/navbar";
 import SectionCard from "../components/sectionCard/sectionCard";
 import { getVideos } from "../lib/videos";
 
-export default function Home({ disneyVideos }) {
+export default function Home({
+  disneyVideos,
+  travelVideos,
+  productivityVideos,
+  popularVideos,
+}) {
   return (
     <div className={styles.container}>
       <Head>
@@ -17,7 +22,7 @@ export default function Home({ disneyVideos }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navbar userName="Lokprakash" />
+      <Navbar />
       <Banner
         title="Clifford the red dog"
         subTitle="Red dog"
@@ -25,15 +30,28 @@ export default function Home({ disneyVideos }) {
       />
 
       <SectionCard title="Disney" videos={disneyVideos} size="large" />
+      <SectionCard title="Travel" videos={travelVideos} size="small" />
+      <SectionCard
+        title="Productivity"
+        videos={productivityVideos}
+        size="medium"
+      />
+      <SectionCard title="comedies" videos={popularVideos} size="small" />
     </div>
   );
 }
 
 export const getServerSideProps = async () => {
-  const disneyVideos = getVideos();
+  const disneyVideos = await getVideos("disney trailers");
+  const travelVideos = await getVideos("travel videos");
+  const productivityVideos = await getVideos("productivity videos");
+  const popularVideos = await getVideos("standup comedies");
   return {
     props: {
       disneyVideos,
+      travelVideos,
+      productivityVideos,
+      popularVideos,
     },
   };
 };

@@ -1,9 +1,23 @@
 import Link from "next/link";
 import styles from "./navbar.module.css";
-import { useState } from "react";
-const Navbar = ({ userName }) => {
+import { useState, useEffect } from "react";
+import { magic } from "../../lib/magic-client";
+import { useRouter } from "next/router";
+const Navbar = () => {
   const [showSignOut, setShowSignOut] = useState(false);
-
+  const [email, setEmail] = useState("");
+  const router = useRouter();
+  const getEmail = async () => {
+    try {
+      const { email, publicAddress } = await magic.user.getMetadata();
+      setEmail(email);
+    } catch (err) {
+      console.error("Error in retriving email", err);
+    }
+  };
+  useEffect(() => {
+    getEmail();
+  }, []);
   return (
     <div className={styles.container}>
       <div className={styles.wrapper}>
@@ -26,14 +40,17 @@ const Navbar = ({ userName }) => {
               className={styles.usernameBtn}
               onClick={() => setShowSignOut(!showSignOut)}
             >
-              <p className={styles.username}>{userName}</p>
+              <p className={styles.username}>{email}</p>
             </button>
             {showSignOut && (
               <div className={styles.navDropdown}>
-                <div>
-                  <Link href="/login" passHref>
-                    <a className={styles.linkName}>Sign Out</a>
-                  </Link>
+                <div
+                  onClick={async () => {
+                    await magic.user.logout();
+                    router.push("/login");
+                  }}
+                >
+                  <a className={styles.linkName}>Sign Out</a>
                   <div className={styles.lineWrapper}></div>
                 </div>
               </div>
